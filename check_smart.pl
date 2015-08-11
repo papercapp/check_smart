@@ -276,7 +276,10 @@ foreach $device ( split(":",$device) ){
             #    9 Power_On_Minutes        0x0032   241   241   000    Old_age   Always       -       113h+12m
             next unless $line =~ /^\s*\d+\s(\S+)\s+(?:\S+\s+){6}(\S+)\s+(\d+)/;
             my ($attribute_name, $when_failed, $raw_value) = ($1, $2, $3);
-            if ($when_failed ne '-'){
+            if  ($when_failed ne '-' &&
+                    ($attribute_name ne 'Airflow_Temperature_Cel' || ($attribute_name eq 'Airflow_Temperature_Cel' && $when_failed ne 'In_the_past')) &&
+                    ($attribute_name ne 'Temperature_Celsius' || ($attribute_name eq 'Temperature_Celsius' && $when_failed ne 'In_the_past'))
+                ){
                 push(@error_messages, "Attribute $attribute_name failed at $when_failed");
                 escalate_status('WARNING');
                 warn "(debug) parsed SMART attribute $attribute_name with error condition:\n$when_failed\n\n" if $opt_debug;
